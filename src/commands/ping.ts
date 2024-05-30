@@ -6,6 +6,7 @@ import {
 	StringSelectMenuBuilder,
 } from "discord.js";
 import { SlashCommand } from "../scripts/types/SlashCommand";
+import { download } from "../services/Download.service";
 
 type PingButtonValue = {
 	button: string;
@@ -52,7 +53,19 @@ export const Ping: SlashCommand = {
 	description: "Replies with pong!!!",
 	options: [
 		{
-			name: "message",
+			name: "url",
+			description: "Type something here",
+			type: ApplicationCommandOptionType.String,
+			required: true,
+		},
+		{
+			name: "start",
+			description: "Type something here",
+			type: ApplicationCommandOptionType.String,
+			required: false,
+		},
+		{
+			name: "end",
 			description: "Type something here",
 			type: ApplicationCommandOptionType.String,
 			required: false,
@@ -60,20 +73,32 @@ export const Ping: SlashCommand = {
 	],
 
 	async onCommandExecuted(interaction) {
-		const message = interaction.options.get("message");
 
-		let replyMessage = "Hello";
-		if (message) {
-			replyMessage += `\nYour message is: ${message.value}`;
-		}
+        await interaction.deferReply({ ephemeral: true });
 
-		const button = PingButton({});
-		const menuSelect = PingMenuSelect();
+		const url = interaction.options.get("url");
+        const start = interaction.options.get("start");
+        const end = interaction.options.get("end");
 
-		await interaction.reply({
-			content: replyMessage,
-			components: [button, menuSelect],
-		});
+        if (!url || !start || !end) return;
+
+		const response = await download({
+            videos: [
+                {
+                    url: url.value as string, 
+                    highlight: (start && end) ? [
+                        {
+                            start: start.value as string,
+                            end: end.value as string
+                        }
+                    ] : []
+                }
+            ]
+        })
+
+        console.log(response)
+
+		await interaction.editReply("Done!!!!");
 	},
 
 	async onButtonPressed(interaction) {
