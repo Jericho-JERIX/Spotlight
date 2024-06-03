@@ -21,13 +21,15 @@ export interface DownloadManyHighlightRequest {
     }[]
 }
 
+export interface Highlight {
+	start: string;
+	end: string;
+	downloadVideo: DownloadVideoAttribute;
+}
+
 export interface DownloadManyHighlightResponse {
     url: string;
-    highlights: {
-        start: string;
-        end: string;
-        downloadVideo: DownloadVideoAttribute
-    }[]
+    highlights: Highlight[]
 }
 
 export async function download(
