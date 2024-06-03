@@ -82,21 +82,21 @@ export const Ping: SlashCommand = {
 
         if (!url || !start || !end) return;
 
-		const response = await download({
-            videos: [
-                {
-                    url: url.value as string, 
-                    highlight: (start && end) ? [
-                        {
-                            start: start.value as string,
-                            end: end.value as string
-                        }
-                    ] : []
-                }
-            ]
-        })
+		// const response = await download({
+        //     videos: [
+        //         {
+        //             url: url.value as string, 
+        //             highlight: (start && end) ? [
+        //                 {
+        //                     start: start.value as string,
+        //                     end: end.value as string
+        //                 }
+        //             ] : []
+        //         }
+        //     ]
+        // })
 
-        console.log(response)
+        // console.log(response)
 
 		await interaction.editReply("Done!!!!");
 	},

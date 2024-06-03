@@ -6,9 +6,12 @@ import {
 	StringSelectMenuBuilder,
 } from "discord.js";
 import { SlashCommand } from "../scripts/types/SlashCommand";
-import { DownloadManyVideoRequest, download } from "../services/Download.service";
+import { DownloadManyHighlightRequest, download } from "../services/Download.service";
 import { statSync } from "fs";
 import ffmpeg from "ffmpeg";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 function isFileTooLarge(filePath: string): boolean {
 	return statSync(filePath).size > 8 * 1024 * 1024;
@@ -57,13 +60,9 @@ export const Spotlight: SlashCommand = {
 
 		console.log("Start downloading");
 
-        const payload:DownloadManyVideoRequest = {
-			videos: [
-				{
-					url: url.value as string,
-					highlight: hightlights,
-				},
-			],
+        const payload:DownloadManyHighlightRequest = {
+            url: url.value as string,
+			highlights: hightlights
 		}
         
         console.log(payload)
@@ -73,17 +72,12 @@ export const Spotlight: SlashCommand = {
 		console.log(response);
 
         const sendFile = [];
-        for (let i=0;i<response.videos[0].trimmedVideos.length;i++) {
+        for (let i=0;i<response.highlights.length;i++) {
             
             let file;
-            file = response.videos[0].trimmedVideos[i].editedVideo.filename;
-            // if (hightlights.length === 0) {
-            //     file = response.videos[0].video.filename;
-            // } else {
-            //     file = response.videos[0].trimmedVideos[0].editedVideo.filename;
-            // }
+            file = response.highlights[i].downloadVideo.filename;
 
-            file = `./../Streaming-Content-Manager/src/dumps/${file}`;
+            file = `${process.env.BASE_VAULT_PATH}/${file}`;
             console.log(file);
 
             if (isFileTooLarge(file)) {

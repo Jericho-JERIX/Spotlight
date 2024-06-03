@@ -6,16 +6,6 @@ export interface DownloadVideoAttribute {
 	platformId: string;
 }
 
-export interface DownloadManyVideoRequest {
-	videos: {
-		url: string;
-		highlight: {
-			start: string;
-			end: string;
-		}[];
-	}[];
-}
-
 export interface VideoTrimResult {
 	originalVideo: DownloadVideoAttribute;
 	editedVideo: DownloadVideoAttribute;
@@ -23,17 +13,27 @@ export interface VideoTrimResult {
 	end: number;
 }
 
-export interface DownloadManyVideoResponse {
-	videos: {
-		video: DownloadVideoAttribute;
-		trimmedVideos: VideoTrimResult[];
-	}[];
+export interface DownloadManyHighlightRequest {
+    url: string;
+    highlights: {
+        start: string;
+        end: string;
+    }[]
+}
+
+export interface DownloadManyHighlightResponse {
+    url: string;
+    highlights: {
+        start: string;
+        end: string;
+        downloadVideo: DownloadVideoAttribute
+    }[]
 }
 
 export async function download(
-	body: DownloadManyVideoRequest
-): Promise<DownloadManyVideoResponse> {
-	const res = await fetch("http://localhost:8080/downloads", {
+	body: DownloadManyHighlightRequest
+): Promise<DownloadManyHighlightResponse> {
+	const res = await fetch("http://localhost:8080/highlights", {
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -42,7 +42,7 @@ export async function download(
 	});
 
 	if (res.ok) {
-		return res.json() as Promise<DownloadManyVideoResponse>;
+		return res.json() as Promise<DownloadManyHighlightResponse>;
 	}
 	throw new Error("Failed to download videos");
 }
